@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import '../providers/userProvider.dart';
 import 'package:provider/provider.dart';
 import '../screen/popupScreen.dart';
+import 'package:path_provider/path_provider.dart';
 
 class addPlaylist extends StatefulWidget {
   const addPlaylist({super.key});
@@ -16,14 +17,34 @@ class _addPlaylistState extends State<addPlaylist> {
   final namePlaylist = TextEditingController();
   final descPlaylist = TextEditingController();
   File? selectedImage;
+  String?
+      selectedImageFileName; // Tambahkan variabel untuk nama file gambar terpilih
 
   Future<void> getImage() async {
-    final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-    setState(() {
-      if (image != null) {
-        selectedImage = File(image.path);
+    final imagePicker = ImagePicker();
+    final pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      final appDocDir = await getApplicationDocumentsDirectory();
+      final imageFileName = pickedFile.name;
+
+      // Convert XFile to File
+      final imageFile = File(pickedFile.path);
+
+      // Create a destination File in the application's documents directory
+      final localImage = File('${appDocDir.path}/$imageFileName');
+
+      // Copy the File
+      try {
+        await imageFile.copy(localImage.path);
+
+        setState(() {
+          selectedImage = localImage;
+          selectedImageFileName = imageFileName;
+        });
+      } catch (e) {
+        print('Error copying file: $e');
       }
-    });
+    }
   }
 
   Widget build(BuildContext context) {
@@ -183,10 +204,13 @@ class _addPlaylistState extends State<addPlaylist> {
                       );
                     } else {
                       context.read<UsersProvider>().tambahPlaylistBaru(
-                          namePlaylist: namePlaylist.text,
-                          descPlaylist: descPlaylist.text,
-                          selectedImage: selectedImage);
+                            namePlaylist: namePlaylist.text,
+                            descPlaylist: descPlaylist.text,
+                            selectedImage: selectedImage,
+                            selectedImageFileName: selectedImageFileName,
+                          );
                       Navigator.pop(context);
+                      print('Path gambar: ${selectedImage?.path}');
                     }
                   },
                   child: Container(

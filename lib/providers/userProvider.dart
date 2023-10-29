@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import '../providers/playlistProvider.dart';
 import 'package:rythm/providers/songProvider.dart';
+import 'package:uuid/uuid.dart';
 import 'dart:io';
 
 class UsersProvider extends ChangeNotifier {
@@ -20,12 +21,16 @@ class UsersProvider extends ChangeNotifier {
     required String namePlaylist,
     required String descPlaylist,
     required File? selectedImage,
+    required String? selectedImageFileName,
   }) async {
-    if (namePlaylist.isNotEmpty && selectedImage != null) {
+    if (namePlaylist.isNotEmpty &&
+        selectedImage != null &&
+        selectedImageFileName != null) {
       // Mendapatkan direktori dokumen aplikasi
       final appDocDir = await getApplicationDocumentsDirectory();
-      final imageFileName = 'playlist_image.jpg';
-      final localImage = File('${appDocDir.path}/$imageFileName');
+      final imageFileName =
+          selectedImageFileName; // Menggunakan nama file yang terpilih
+      final localImage = File("${appDocDir.path}/$imageFileName");
 
       // Mengecek apakah file lokal ada
       if (await localImage.exists()) {
@@ -33,9 +38,9 @@ class UsersProvider extends ChangeNotifier {
         // Tambahkan playlist baru dengan path gambar lokal
         playListArr.add(PlayListProvider(
           id: "04", // Sesuaikan dengan kebutuhan
-          name: namePlaylist,
+          name: namePlaylist, // Menggunakan value dari namePlaylist
           image: localImage.path,
-          desc: descPlaylist,
+          desc: descPlaylist, // Menggunakan value dari descPlaylist
         ));
         notifyListeners();
         // Bersihkan input setelah menambah playlist baru
