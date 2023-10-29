@@ -188,6 +188,36 @@ class _playlist1State extends State<playlist1> {
       ),
     );
   }
+
+  Widget _buildAddSong() {
+    return Container(
+      width: double.infinity,
+      height: 61,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5),
+        color: Color(0xffd2afff),
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 29.5, vertical: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.add_circle_rounded,
+            size: 41,
+            color: Colors.white,
+          ),
+          SizedBox(
+            width: 5,
+          ),
+          Text("Add Song",
+              style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white))
+        ],
+      ),
+    );
+  }
 }
 
 class songListinPlaylist extends StatelessWidget {
@@ -259,7 +289,66 @@ class songListinPlaylist extends StatelessWidget {
                   ),
                 ),
               ),
-              Icon(Icons.more_vert_rounded, color: Color(0xFFD2AFFF), size: 30),
+              InkWell(
+                onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) {
+                      return Container(
+                        padding: EdgeInsets.only(top: 24, left: 31, right: 31),
+                        height: 80,
+                        decoration: ShapeDecoration(
+                          color: Color(0xFFD2AFFF),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20),
+                                  topRight: Radius.circular(20))),
+                        ),
+                        child: Column(
+                          children: [
+                            InkWell(
+                                onTap: () {
+                                  context
+                                      .read<UsersProvider>()
+                                      .deleteLagudariPlaylist(
+                                          playlist:
+                                              listPlayList.playListArr[currIdx],
+                                          song: iniDaftarPlaylist
+                                              .songList[currIdx]);
+                                  Navigator.pop(context);
+                                  // Tutup modal bottom sheet
+                                },
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.delete_rounded,
+                                      color: Colors.white,
+                                      size: 30,
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text(
+                                      'Hapus Lagu',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontFamily: 'Poppins',
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    )
+                                  ],
+                                )),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+                child: Icon(Icons.more_vert_rounded,
+                    color: Color(0xFFD2AFFF), size: 30),
+              ),
             ],
           ),
         ),

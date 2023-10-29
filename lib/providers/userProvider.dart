@@ -76,4 +76,10 @@ class UsersProvider extends ChangeNotifier {
     playlist.songList.add(song);
     notifyListeners();
   }
+
+  void deleteLagudariPlaylist(
+      {required PlayListProvider playlist, required SongProvider song}) {
+    playlist.songList.remove(song);
+    notifyListeners();
+  }
 }
